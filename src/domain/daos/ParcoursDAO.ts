@@ -16,8 +16,6 @@ export class ParcoursDAO implements IDAO<Parcours> {
 
   public async create(data: Parcours): Promise<Parcours> { 
     try { 
-      console.log('VITE_API_URL =', import.meta.env.VITE_API_URL);
-      console.log('ALL ENV =', import.meta.env);
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/Parcours`, data); 
       return response.data; 
     } catch (error) { 
@@ -41,9 +39,11 @@ export class ParcoursDAO implements IDAO<Parcours> {
  
   public async list(): Promise<Parcours[]> { 
     // List all Parcours documents from the database 
-    return [ 
-      { ID: 1, NomParcours: 'Parcours 1', AnneeFormation: 2024 }, 
-      { ID: 2, NomParcours: 'Parcours 2', AnneeFormation: 2024 } 
-    ]; 
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Parcours`);
+      return response.data;
+    } catch (error) {
+      throw new Error('Impossible de récupérer les parcours');
+    }
   } 
 } 
