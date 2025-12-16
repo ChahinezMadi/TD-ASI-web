@@ -16,6 +16,8 @@ export class ParcoursDAO implements IDAO<Parcours> {
 
   public async create(data: Parcours): Promise<Parcours> { 
     try { 
+      console.log('VITE_API_URL =', import.meta.env.VITE_API_URL);
+      console.log('ALL ENV =', import.meta.env);
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/Parcours`, data); 
       return response.data; 
     } catch (error) { 

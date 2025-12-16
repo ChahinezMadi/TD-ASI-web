@@ -64,16 +64,16 @@ const saveParcours = () => {
             <div class="card-body">
                 <div class="card-text mt-1 mb-1">
                     <form>
-                        <CustomInput id="intitule" libelle="Intitulé" type="text" placeholder="Intitulé du parcours" />
+                        <CustomInput id="intitule" libelle="Intitulé" type="text" placeholder="Intitulé du parcours" v-model="currentParcours.NomParcours" />
                         <CustomInput class="mt-2" id="annee" libelle="Année" type="number"
-                            placeholder="Année de formation" />
+                            placeholder="Année de formation" v-model="currentParcours.AnneeFormation" />
                     </form>
                 </div>
                 <CustomButton class="mt-1" style="margin-left: 5px" :color="BootstrapButtonEnum.danger"
                     @click="closeForm">
                     Annuler
                 </CustomButton>
-                <CustomButton class="mt-1" style="margin-left: 5px" :color="BootstrapButtonEnum.primary">
+                <CustomButton class="mt-1" style="margin-left: 5px" :color="BootstrapButtonEnum.primary" @click="saveParcours">
                     Enregistrer
                 </CustomButton>
             </div>
