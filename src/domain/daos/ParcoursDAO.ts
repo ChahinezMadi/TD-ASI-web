@@ -5,6 +5,9 @@ import axios from 'axios';
 export class ParcoursDAO implements IDAO<Parcours> { 
   private static instance: ParcoursDAO; 
 
+  private parcours: Parcours[] = [];
+  private idCounter: number = 1;
+  
   private constructor() {} 
 
   public static getInstance(): ParcoursDAO { 
@@ -33,17 +36,27 @@ export class ParcoursDAO implements IDAO<Parcours> {
     return data; 
   } 
 
-  public async delete(id: number): Promise<void> { 
-    // Delete a Parcours document from the database 
-  } 
+public async delete(id: number): Promise<void> {
+  try {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/Parcours/${id}`);
+    const index = this.parcours.findIndex(p => p.ID === id);
+if (index !== -1) this.parcours.splice(index, 1);
+  } catch (error: any) {
+    const msg =
+      error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      "Impossible de supprimer le parcours";
+    throw new Error(msg);
+  }
+}
  
-  public async list(): Promise<Parcours[]> { 
-    // List all Parcours documents from the database 
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Parcours`);
-      return response.data;
-    } catch (error) {
-      throw new Error('Impossible de récupérer les parcours');
-    }
-  } 
+public async list(): Promise<Parcours[]> {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Parcours`);
+    this.parcours = response.data;   
+    return this.parcours;
+  } catch {
+    throw new Error('Impossible de récupérer les parcours');
+  }
+}
 } 
