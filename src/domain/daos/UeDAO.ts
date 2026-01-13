@@ -1,9 +1,7 @@
 import axios from 'axios';
-import { ref } from 'vue';
 import type {Parcours} from "@/domain/entities/Parcours";
 import { UE } from '../entities/UE';
 
-const UEFormRef = ref<InstanceType<typeof UEForm> | null>(null);
 
 export class UeDAO {
     private static instance: UeDAO;

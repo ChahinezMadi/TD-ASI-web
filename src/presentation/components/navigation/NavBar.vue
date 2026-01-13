@@ -24,6 +24,11 @@ import { RouterLink } from 'vue-router'
               <RouterLink class="nav-link" active-class="active" to="/UE">UE</RouterLink>
             </li>
           </ul>
+        <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <RouterLink class="nav-link" active-class="active" to="/etudiants">Etudiants</RouterLink>
+        </li>
+        </ul>
         </ul>
         <hr>
         <div class="dropdown">
