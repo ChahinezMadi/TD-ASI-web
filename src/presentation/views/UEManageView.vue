@@ -206,44 +206,48 @@ onMounted(loadAll);
 
 <template>
   <div class="container-fluid mt-4" v-if="ue">
-    <!-- Modifier UE -->
-    <div class="card p-3 mb-3">
-      <h5>Modifier l'UE</h5>
-
-      <div class="row align-items-end">
-        <div class="col-3">
-          <CustomInput
-            id="numeroUe"
-            v-model="ue.NumeroUe"
-            libelle="Numéro"
-            type="text"
-            placeholder="UE1"
-            :error="null"
-          />
-        </div>
-
-        <div class="col">
-          <CustomInput
-            id="intituleUe"
-            v-model="ue.Intitule"
-            libelle="Intitulé"
-            type="text"
-            placeholder="..."
-            :error="null"
-          />
-        </div>
-
-        <div class="col-auto">
-          <CustomButton :color="BootstrapButtonEnum.info" @click="saveUeBasics">
-            Enregistrer
-          </CustomButton>
-        </div>
-      </div>
-    </div>
-
     <div class="row">
-      <!-- Notes -->
-      <div class="col-md-8">
+      <!-- COLONNE GAUCHE : UE + NOTES -->
+      <div class="col-md-6">
+        <!-- Modifier UE -->
+        <div class="card p-3 mb-3">
+          <h5>Modifier l'UE</h5>
+
+          <div class="row align-items-end">
+            <div class="col-4">
+              <CustomInput
+                id="numeroUe"
+                v-model="ue.NumeroUe"
+                libelle="Numéro"
+                type="text"
+                placeholder="UE1"
+                :error="null"
+              />
+            </div>
+
+            <div class="col">
+              <CustomInput
+                id="intituleUe"
+                v-model="ue.Intitule"
+                libelle="Intitulé"
+                type="text"
+                placeholder="..."
+                :error="null"
+              />
+            </div>
+
+            <div class="col-auto">
+              <CustomButton
+                :color="BootstrapButtonEnum.info"
+                @click="saveUeBasics"
+              >
+                Enregistrer
+              </CustomButton>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
         <div class="card p-3">
           <h5>Notes</h5>
 
@@ -256,23 +260,29 @@ onMounted(loadAll);
             :key="s.ID"
             class="d-flex justify-content-between align-items-center border rounded p-2 mb-2"
           >
-            <div>{{ s.nom }} {{ s.prenom }}</div>
+            <div>
+              {{ s.nom }} {{ s.prenom }}
+            </div>
 
-            <button class="btn btn-outline-dark" style="width: 90px" @click="editNote(s.ID)">
+            <button
+              class="btn btn-outline-dark"
+              style="width: 90px"
+              @click="editNote(s.ID)"
+            >
               {{ displayNote(s.note) }} / 20
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Parcours -->
-      <div class="col-md-4">
-        <div class="card p-3">
+      <!-- COLONNE DROITE : PARCOURS -->
+      <div class="col-md-6">
+        <div class="card p-3 h-100">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 class="m-0">Parcours</h5>
 
             <div class="d-flex gap-2 align-items-center">
-              <div style="min-width: 220px;">
+              <div style="min-width: 220px">
                 <vSelect
                   multiple
                   label="NomParcours"
@@ -282,7 +292,12 @@ onMounted(loadAll);
                 />
               </div>
 
-              <CustomButton :color="BootstrapButtonEnum.success" @click="addParcours">+</CustomButton>
+              <CustomButton
+                :color="BootstrapButtonEnum.success"
+                @click="addParcours"
+              >
+                +
+              </CustomButton>
             </div>
           </div>
 
@@ -296,7 +311,13 @@ onMounted(loadAll);
             class="d-flex justify-content-between align-items-center border rounded p-2 mb-2"
           >
             <div>{{ p.NomParcours }}</div>
-            <CustomButton :color="BootstrapButtonEnum.danger" @click="removeParcours(p.ID!)">-</CustomButton>
+
+            <CustomButton
+              :color="BootstrapButtonEnum.danger"
+              @click="removeParcours(p.ID!)"
+            >
+              -
+            </CustomButton>
           </div>
         </div>
       </div>
