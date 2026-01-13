@@ -12,22 +12,43 @@ export class EtudiantsDAO {
     return EtudiantsDAO.instance;
   }
 
-public async list(): Promise<any[]> {
-  const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/etudiants`);
-  return res.data;
-}
+  private baseUrl() {
+    return `${import.meta.env.VITE_API_URL}/api/etudiants`;
+  }
+
+  public async list(): Promise<Etudiant[]> {
+    const res = await axios.get(this.baseUrl());
+    return (res.data as any[]).map((e) => {
+      const parcours =
+        e.parcours
+          ? e.parcours
+          : (e.parcours_id ? ({ ID: e.parcours_id } as Parcours) : null);
+
+      return new Etudiant(e.ID, e.nom, e.prenom, e.email, parcours);
+    });
+  }
 
   public async create(data: Etudiant): Promise<Etudiant> {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/etudiants`,
-        data.toJSON()
-      );
+      //attendu par le backend (et stable)
+      const payload = {
+        nom: data.nom,
+        prenom: data.prenom,
+        email: data.email,
+        parcours_id: data.parcours?.ID ?? null,
+      };
 
-      // ton backend renvoie { message, etudiant }
+      const res = await axios.post(this.baseUrl(), payload);
+
+      // backend: { message, etudiant } ou parfois directement l'objet
       const e = res.data?.etudiant ?? res.data;
 
-      return new Etudiant(e.ID, e.nom, e.prenom, e.email, e.parcours ?? null);
+      const parcours =
+        e.parcours
+          ? e.parcours
+          : (e.parcours_id ? ({ ID: e.parcours_id } as Parcours) : data.parcours ?? null);
+
+      return new Etudiant(e.ID, e.nom, e.prenom, e.email, parcours);
     } catch (error: any) {
       const msg =
         error?.response?.data?.error ||
@@ -39,16 +60,29 @@ public async list(): Promise<any[]> {
 
   public async update(id: number, data: Etudiant): Promise<Etudiant> {
     try {
-      const res = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/etudiants/${id}`,
-        data.toJSON()
-      );
+      //attendu par ton backend
+      const payload = {
+        nom: data.nom,
+        prenom: data.prenom,
+        email: data.email,
+        parcours_id: data.parcours?.ID ?? null,
+      };
 
-      // ton backend renvoie { message, etudiant }
+      const res = await axios.put(`${this.baseUrl()}/${id}`, payload);
+
+      //backend: { message, etudiant }
       const e = res.data?.etudiant ?? res.data;
 
-      return new Etudiant(e.ID, e.nom, e.prenom, e.email, e.parcours ?? null);
+      const parcours =
+        e.parcours
+          ? e.parcours
+          : (e.parcours_id ? ({ ID: e.parcours_id } as Parcours) : data.parcours ?? null);
+
+      return new Etudiant(e.ID ?? id, e.nom ?? data.nom, e.prenom ?? data.prenom, e.email ?? data.email, parcours);
     } catch (error: any) {
+      //pour diagnostiquer si c'est 400/404/etc
+      console.error("EtudiantsDAO.update error:", error?.response?.status, error?.response?.data, error);
+
       const msg =
         error?.response?.data?.error ||
         error?.response?.data?.message ||
@@ -59,7 +93,7 @@ public async list(): Promise<any[]> {
 
   public async delete(id: number): Promise<void> {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/etudiants/${id}`);
+      await axios.delete(`${this.baseUrl()}/${id}`);
     } catch (error: any) {
       const msg =
         error?.response?.data?.error ||

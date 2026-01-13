@@ -27,12 +27,32 @@ const formatterSuppression = () => '<i class="bi bi-trash-fill text-danger"></i>
 
 const formatterParcours = (e: Etudiant) => e.parcours?.NomParcours ?? "";
 
-const onEtudiantCreated = (e: Etudiant) => etudiantsList.value.unshift(e);
+const refresh = async () => {
+  const parcours = await ParcoursDAO.getInstance().list();
+  const parcoursById = new Map<number, Parcours>();
+  parcours.forEach(p => parcoursById.set(p.ID!, p));
 
-const onEtudiantUpdated = (e: Etudiant) => {
-  const idx = etudiantsList.value.findIndex(x => x.ID === e.ID);
-  if (idx !== -1) etudiantsList.value[idx] = e;
+  const etudiants = await EtudiantsDAO.getInstance().list();
+  etudiantsList.value = etudiants.map(e => {
+    const pid = (e.parcours as any)?.ID ?? (e as any).parcours_id;
+    return new Etudiant(
+      e.ID,
+      e.nom,
+      e.prenom,
+      e.email,
+      pid ? parcoursById.get(pid) ?? ({ ID: pid, NomParcours: "" } as any) : null
+    );
+  });
 };
+
+const onEtudiantCreated = async () => {
+  await refresh();
+};
+
+const onEtudiantUpdated = async () => {
+  await refresh();
+};
+
 
 const onDeleteEtudiant = (e: Etudiant) => {
   Swal.fire({
@@ -80,35 +100,28 @@ const columns = [
 import { ParcoursDAO } from "@/domain/daos/ParcoursDAO";
 
 onMounted(async () => {
-  console.log("EtudiantsView mounted");
   try {
-    //Charger les parcours
-    const parcoursList = await ParcoursDAO.getInstance().list();
-    const parcoursById = new Map<number, string>();
+    const parcours = await ParcoursDAO.getInstance().list();
+    const parcoursById = new Map<number, Parcours>();
+    parcours.forEach(p => parcoursById.set(p.ID!, p));
 
-    parcoursList.forEach(p => {
-      if (p.ID && p.NomParcours) {
-        parcoursById.set(p.ID, p.NomParcours);
-      }
-    });
-
-    //Charger les étudiants
     const etudiants = await EtudiantsDAO.getInstance().list();
-    console.log("data etudiants =", etudiants);
 
-    //Injecter le NomParcours dans chaque étudiant
-    etudiantsList.value = etudiants.map(e => ({
-      ...e,
-      parcours: e.parcours_id
-        ? { ID: e.parcours_id, NomParcours: parcoursById.get(e.parcours_id) ?? "" }
-        : null,
-    }));
-
+    etudiantsList.value = etudiants.map(e => {
+      const pid = (e.parcours as any)?.ID ?? (e as any).parcours_id; // selon ton Etudiant
+      return new Etudiant(
+        e.ID,
+        e.nom,
+        e.prenom,
+        e.email,
+        pid ? parcoursById.get(pid) ?? ({ ID: pid, NomParcours: "" } as any) : null
+      );
+    });
   } catch (e: any) {
-    console.error("list etudiants erreur", e);
     Swal.fire("Erreur", e?.message ?? "Impossible de charger", "error");
   }
 });
+
 
 
 </script>
