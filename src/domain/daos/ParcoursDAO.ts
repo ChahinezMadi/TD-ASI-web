@@ -59,4 +59,10 @@ public async list(): Promise<Parcours[]> {
     throw new Error('Impossible de récupérer les parcours');
   }
 }
+
+public async getInscrits(parcoursId: number): Promise<Array<{ID:number; nom:string; prenom:string; email:string;}>> {
+  const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/Parcours/${parcoursId}/inscrits`);
+  // res.data = { ...parcours, inscrits: [...] } selon ton service
+  return res.data?.inscrits ?? [];
+}
 } 

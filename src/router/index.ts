@@ -3,6 +3,7 @@ import HomeView from '../presentation/views/HomeView.vue';
 import ParcoursListView from '@/presentation/views/ParcoursListView.vue'
 import UEListView from "@/presentation/views/UEListView.vue"; 
 import EtudiantsView from "@/presentation/views/EtudiantsView.vue";
+import UEManageView from "@/presentation/views/UEManageView.vue";
 
 
 const router = createRouter({ 
@@ -28,6 +29,11 @@ const router = createRouter({
       name: "etudiants",
       component: EtudiantsView,
     },
+    {
+      path: "/ues/:id/manage",
+      name: "ue-manage",
+      component: UEManageView,
+    }
   ] 
 });
 

@@ -22,12 +22,12 @@ const formatterSuppression = (ue: UE) => {
 };
 
 const onUECreated = (newUE: UE) => {
-console.log("✅ create:ue reçu", newUE);
+console.log("create:ue reçu", newUE);
   UE.value.unshift(newUE);
 };
 
 const onUEUpdated = (updatedUE: UE) => {
-console.log("✅ update:ue reçu", updatedUE);
+console.log("update:ue reçu", updatedUE);
   const index = UE.value.findIndex((u) => u.ID === updatedUE.ID);
   if (index !== -1) {
     UE.value[index] = updatedUE;
@@ -51,12 +51,16 @@ const onDeleteUE = (ue: UE) => {
   });
 };
 
+const goManage = (ue: UE) => {
+  router.push({ name: "ue-manage", params: { id: ue.ID } });
+};
+
 const columns = [
   {
     field: 'EditionUE',
     label: 'Edition',
     formatter: formatterEdition,
-    onClick: (ue: UE) => ueForm.value?.openForm(ue),
+    onClick: goManage,
     style: 'width: 32px;text-align:center;'
   },
   { field: 'ID', label: 'ID', formatter: null, onClick: null, style: null },
